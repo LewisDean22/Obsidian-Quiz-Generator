@@ -1,0 +1,13 @@
+' Create an instance of Windows Shell
+Set objShell = CreateObject("WScript.Shell")
+
+' Full path to Poetry executable
+strPoetry = "<INSERT-PATH-TO-YOUR-POETRY-EXECUTABLE>"
+' Full path to your project directory (where pyproject.toml lives)
+strProjectDir = "<INSERT-PATH-TO-REPOSITORY-PYPROJECT-FILE>"
+
+' Command to run Python script
+strCmd = "cmd.exe /k cd /d """ & strProjectDir & """ && """ & strPoetry & """ run obsidian_quiz"
+
+' Run command visible (1), wait for completion (True)
+objShell.Run strCmd, 1, True

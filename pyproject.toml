@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "obsidian_quiz"
+version = "0.1.0"
+description = "Use GPT-4o-mini to make quizzes from your Obsidian notes."
+authors = ["Lewis Dean <lewisdean22@outlook.com>"]
+packages = [
+    { include = "obsidian_quiz", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11.9"
+openai = "^1.107.2"
+langchain_openai = "^0.3.33"
+chromadb = "^1.0.21"
+python-dotenv = "^1.1.1"
+
+[tool.poetry.scripts]
+obsidian_quiz = "obsidian_quiz.main:main"

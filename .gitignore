@@ -1,0 +1,9 @@
+.env
+config.ini
+TODO.md
+windows_obsidian_quiz.vbs
+src/obsidian_quiz/core/quiz_with_vector_db.py
+lewis_vault
+__pycache__/
+.mypy_cache/
+.venv/

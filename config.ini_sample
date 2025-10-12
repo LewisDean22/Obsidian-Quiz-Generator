@@ -1,0 +1,7 @@
+[quiz_settings]
+# where markdown files will be pulled from
+vault_directory = <INSERT YOUR VAULT FOLDER OR SUB-FOLDER HERE>
+# below this, a quiz will not be generated
+minimum_line_count = 3
+# added so too many tokens not used on one request!
+max_questions = 15
