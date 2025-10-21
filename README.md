@@ -10,6 +10,7 @@ Obsidian Quiz Generator is a CLI tool that uses OpenAI's GPT-4o mini to create i
 ### Features
 
 - **Random Quiz Mode** - a random note is selected from your vault and generates a quiz based on its content.
+- **Search Quiz Mode** - fuzzy search through your Obsidian vault to find a Markdown note you wish to be quizzed on.
 - **Option to Continue Playing** - at the end of a quiz, you choose whether to continue with a quiz on another note or to exit.
 - **Customisable Question Count** - input the desired number of questions for the selected note through the CLI. Enter `0` for the option to continue with a different random note.
 - **Interactive Questioning** - questions appear one at a time. Press Enter to reveal the answer and self-report whether you answered correctly.
@@ -52,7 +53,6 @@ poetry run obsidian_quiz
     - Use a JSON to store last-k quiz scores for each note, along with each note's average quiz score and the overall average across all Obsidian quizzes taken.
     - Display these statistics at the end of each quiz.
 2. Additional Quiz Modes:
-    - Search Mode – use a fuzzy search to find Markdown notes to be quizzed on. Navigate the top-k matches with arrow keys to select the desired note.
     - Spaced Repetition Mode (for more effective learning).
     - RAG-sourced Quizzes - store the Obsidian vault in a vector database and generate quizzes on an arbitrary topic according to the user's query.
 
