@@ -6,6 +6,7 @@ from obsidian_quiz.utils.text_formatting import (
 )
 from typing import Final
 import pathlib
+from InquirerPy import inquirer
 from obsidian_quiz.config_loader import VAULT_DIRECTORY, MINIMUM_LINE_COUNT
 
 
@@ -46,14 +47,21 @@ def find_all_valid_markdown_files(
     return markdown_files
 
 
-def get_random_note_content() -> tuple[str, str]:
+def get_note_for_selected__mode(mode: str) -> tuple[str, str]:
     markdown_filepaths = find_all_valid_markdown_files()
     if not markdown_filepaths:
         raise FileNotFoundError("No valid markdown files found for quiz.")
 
-    chosen_note_name = random.choice(list(markdown_filepaths.keys()))
-    cleaned_note_name = convert_to_title(remove_md_extension(chosen_note_name))
+    match mode:
+        case "Random note":
+            chosen_note_name = random.choice(list(markdown_filepaths.keys()))
+        case "Select a note":
+            chosen_note_name = inquirer.fuzzy(
+                message="Search for a Markdown note:",
+                choices=markdown_filepaths
+            ).execute()
 
+    cleaned_note_name = convert_to_title(remove_md_extension(chosen_note_name))
     chosen_note_path = markdown_filepaths[chosen_note_name]
     with open(chosen_note_path, "r", encoding="utf-8") as f:
         note_content = f.read()

@@ -10,12 +10,13 @@ License: MIT
 Version: 0.1.0
 """
 from obsidian_quiz.utils.markdown_file_finder import (
-    get_random_note_content,
+    get_note_for_selected__mode,
 )
 from obsidian_quiz.utils.user_input_handling import (
     setup_quiz_details,
     give_quiz,
     should_quizzing_continue,
+    select_quiz_mode,
 )
 from obsidian_quiz.core.ai_logic import get_quiz
 from obsidian_quiz.config_loader import MAX_QUESTIONS
@@ -41,7 +42,8 @@ def main(system_prompt_template: str = SYSTEM_PROMPT_TEMPLATE,
         # end argument is to avoid automatic \n ending.
         print("Welcome! ", end="")
         while True:
-            note_name, note_content = get_random_note_content()
+            mode = select_quiz_mode()
+            note_name, note_content = get_note_for_selected__mode(mode)
             system_prompt, num_questions = setup_quiz_details(
                 note_name, max_questions, system_prompt_template)
 

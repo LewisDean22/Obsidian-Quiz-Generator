@@ -1,10 +1,21 @@
 import sys
 from obsidian_quiz.utils.text_formatting import print_quiz_title
 import getpass
+from InquirerPy import inquirer
 
 
 def is_user_response_valid(user_response: str) -> bool:
     return user_response in ("y", "n")
+
+
+def select_quiz_mode() -> str:
+    mode = inquirer.select(
+        message="Select a quiz mode:",
+        choices=["Random note", "Select a note"],
+        default="Random note",
+        pointer="👉"
+    ).execute()
+    return mode
 
 
 def setup_quiz_details(note_name: str, max_questions: int,

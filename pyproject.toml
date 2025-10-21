@@ -13,6 +13,7 @@ openai = "^1.107.2"
 langchain_openai = "^0.3.33"
 chromadb = "^1.0.21"
 python-dotenv = "^1.1.1"
+inquirerpy = "^0.3.4"
 
 [tool.poetry.scripts]
 obsidian_quiz = "obsidian_quiz.main:main"
