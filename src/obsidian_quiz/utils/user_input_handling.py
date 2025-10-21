@@ -22,10 +22,6 @@ def setup_quiz_details(note_name: str, max_questions: int,
         system_prompt_vals = {"num_questions": user_input}
         break
 
-    print(system_prompt_vals["num_questions"])
-    if system_prompt_vals["num_questions"] == 0:
-        sys.exit("See you next time!")
-
     # Unpacked mapping passed into format to populate the template.
     system_prompt = system_prompt_template.format(**system_prompt_vals)
     return system_prompt, user_input  # user_input = number of questions

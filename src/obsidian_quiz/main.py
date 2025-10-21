@@ -44,8 +44,14 @@ def main(system_prompt_template: str = SYSTEM_PROMPT_TEMPLATE,
             note_name, note_content = get_random_note_content()
             system_prompt, num_questions = setup_quiz_details(
                 note_name, max_questions, system_prompt_template)
-            questions, answers = get_quiz(note_content, system_prompt)
 
+            if num_questions == 0:
+                if should_quizzing_continue():
+                    continue
+                print("See you next time!")
+                break
+
+            questions, answers = get_quiz(note_content, system_prompt)
             score = give_quiz(note_name, questions, answers)
             print(f"\n\tYou got {score}/{num_questions}!")
 
