@@ -30,11 +30,10 @@ def setup_quiz_details(note_name: str, max_questions: int,
         if user_input > max_questions:
             print(f"The maximum number of questions is {max_questions}.")
             continue
-        system_prompt_vals = {"num_questions": user_input}
         break
 
     # Unpacked mapping passed into format to populate the template.
-    system_prompt = system_prompt_template.format(**system_prompt_vals)
+    system_prompt = system_prompt_template.format(num_questions=user_input)
     return system_prompt, user_input  # user_input = number of questions
 
 

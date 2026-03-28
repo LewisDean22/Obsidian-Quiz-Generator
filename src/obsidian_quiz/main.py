@@ -19,21 +19,8 @@ from obsidian_quiz.utils.user_input_handling import (
     select_quiz_mode,
 )
 from obsidian_quiz.core.ai_logic import get_quiz
-from obsidian_quiz.config_loader import MAX_QUESTIONS
-from typing import Final
-
-
-SYSTEM_PROMPT_TEMPLATE: Final[str] = """You are a quiz generator. Make a
-{num_questions}-question quiz strictly in the following format:
-Q1: Question text
-A1: Answer text
-Q2: Question text
-A2: Answer text
-… and so on for all {num_questions} questions.
-Only respond with the quiz in this exact format. Questions should be general
-and not specific to a given project, but should come
-directly from content found within the inputted text.
-"""
+from obsidian_quiz.config.config_loader import MAX_QUESTIONS
+from obsidian_quiz.config.prompts import SYSTEM_PROMPT_TEMPLATE
 
 
 def main(system_prompt_template: str = SYSTEM_PROMPT_TEMPLATE,

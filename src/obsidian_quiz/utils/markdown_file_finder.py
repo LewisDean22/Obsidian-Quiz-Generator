@@ -7,7 +7,10 @@ from obsidian_quiz.utils.text_formatting import (
 from typing import Final
 import pathlib
 from InquirerPy import inquirer
-from obsidian_quiz.config_loader import VAULT_DIRECTORY, MINIMUM_LINE_COUNT
+from obsidian_quiz.config.config_loader import (
+    VAULT_DIRECTORY,
+    MINIMUM_LINE_COUNT
+)
 
 
 VAULT_DIRECTORY_PATH: Final[pathlib.Path] = pathlib.Path(

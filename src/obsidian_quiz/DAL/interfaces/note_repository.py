@@ -8,7 +8,7 @@ class NoteRepository(ABC):
     Implementators must return Note domain objects.
     """
     @abstractmethod
-    def get_all_ids(self) -> list[NoteId]:
+    def get_all_ids(self) -> set[NoteId]:
         """
         Fetches all notes from the repository, returning a
         list of Notes.

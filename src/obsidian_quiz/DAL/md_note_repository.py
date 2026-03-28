@@ -21,6 +21,8 @@ class MdNoteRepository(NoteRepository):
                 full_path = os.path.join(dirpath, filename)
                 if self._is_valid_md_note(full_path):
                     note_ids.add(NoteId(full_path))
+        if not note_ids:
+            raise ValueError("No valid .md files found for quiz.")
         return note_ids
 
     def _is_valid_md_note(self, full_path: str) -> bool:
