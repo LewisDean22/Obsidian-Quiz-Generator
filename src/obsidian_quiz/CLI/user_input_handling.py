@@ -2,6 +2,8 @@ import sys
 from obsidian_quiz.utils.text_formatting import print_quiz_title
 import getpass
 from InquirerPy import inquirer
+from obsidian_quiz.models import Note, Quiz
+from obsidian_quiz.config.config_loader import MAX_QUESTIONS
 
 
 def is_user_response_valid(user_response: str) -> bool:
@@ -18,31 +20,26 @@ def select_quiz_mode() -> str:
     return mode
 
 
-def setup_quiz_details(note_name: str, max_questions: int,
-                       system_prompt_template: str) -> tuple[str, int]:
-    print(f"You will be quizzed on {note_name}.")
+def get_num_questions() -> int:
     while True:
         user_input_str = input("How many questions would you like? ").strip()
         if not user_input_str.isdigit():
             print("Please enter a valid number of questions...")
             continue
-        user_input = int(user_input_str)
-        if user_input > max_questions:
-            print(f"The maximum number of questions is {max_questions}.")
+        num_questions = int(user_input_str)
+        if num_questions > MAX_QUESTIONS:
+            print(f"The maximum number of questions is {MAX_QUESTIONS}.")
             continue
         break
-
-    # Unpacked mapping passed into format to populate the template.
-    system_prompt = system_prompt_template.format(num_questions=user_input)
-    return system_prompt, user_input  # user_input = number of questions
+    return num_questions
 
 
-def give_quiz(note_name: str, questions: list[str], answers: list[str]) -> int:
-    print_quiz_title(note_name)
+def give_quiz(note: Note, quiz: Quiz) -> int:
+    print_quiz_title(note.name)
 
     score = 0
-    for count, (q, a) in enumerate(zip(questions, answers), start=1):
-        print(f"\tQ{count}: {q}\t")
+    for count, question in enumerate(quiz.questions, start=1):
+        print(f"\tQ{count}: {question.text}\t")
 
         print("\tPress Enter to see the answer...", end="", flush=True)
         # Used instead of input() so "non-Enter-key" characters do not show.
@@ -50,7 +47,7 @@ def give_quiz(note_name: str, questions: list[str], answers: list[str]) -> int:
         sys.stdout.write("\033[F")  # Cursor up one line
         sys.stdout.write("\033[K")  # Erases line
 
-        print(f"\tA{count}: {a}\t")
+        print(f"\tA{count}: {question.answer}\t")
         while True:
             user_response = input(
                 "\tDid you answer correctly? (y/n): "

@@ -11,6 +11,7 @@ from obsidian_quiz.config.config_loader import (
     VAULT_DIRECTORY,
     MINIMUM_LINE_COUNT
 )
+from obsidian_quiz.models import Note
 
 
 VAULT_DIRECTORY_PATH: Final[pathlib.Path] = pathlib.Path(
@@ -50,7 +51,7 @@ def find_all_valid_markdown_files(
     return markdown_files
 
 
-def get_note_for_selected__mode(mode: str) -> tuple[str, str]:
+def get_note_for_selected_mode(mode: str) -> tuple[str, str]:
     markdown_filepaths = find_all_valid_markdown_files()
     if not markdown_filepaths:
         raise FileNotFoundError("No valid markdown files found for quiz.")
@@ -68,4 +69,4 @@ def get_note_for_selected__mode(mode: str) -> tuple[str, str]:
     chosen_note_path = markdown_filepaths[chosen_note_name]
     with open(chosen_note_path, "r", encoding="utf-8") as f:
         note_content = f.read()
-    return cleaned_note_name, note_content
+    return Note(chosen_note_path, cleaned_note_name, note_content)

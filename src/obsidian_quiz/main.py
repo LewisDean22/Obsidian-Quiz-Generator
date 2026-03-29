@@ -10,29 +10,27 @@ License: MIT
 Version: 0.1.0
 """
 from obsidian_quiz.utils.markdown_file_finder import (
-    get_note_for_selected__mode,
+    get_note_for_selected_mode,
 )
-from obsidian_quiz.utils.user_input_handling import (
-    setup_quiz_details,
+from obsidian_quiz.CLI.user_input_handling import (
+    get_num_questions,
     give_quiz,
     should_quizzing_continue,
     select_quiz_mode,
 )
-from obsidian_quiz.core.ai_logic import get_quiz
-from obsidian_quiz.config.config_loader import MAX_QUESTIONS
-from obsidian_quiz.config.prompts import SYSTEM_PROMPT_TEMPLATE
+from obsidian_quiz.DAL import OpenAIService
 
 
-def main(system_prompt_template: str = SYSTEM_PROMPT_TEMPLATE,
-         max_questions: int = MAX_QUESTIONS) -> None:
+def main() -> None:
+    open_ai_service = OpenAIService()
     try:
         # end argument is to avoid automatic \n ending.
         print("Welcome! ", end="")
         while True:
             mode = select_quiz_mode()
-            note_name, note_content = get_note_for_selected__mode(mode)
-            system_prompt, num_questions = setup_quiz_details(
-                note_name, max_questions, system_prompt_template)
+            note = get_note_for_selected_mode(mode)
+            print(f"You will be quizzed on {note.name}.")
+            num_questions = get_num_questions()
 
             if num_questions == 0:
                 if should_quizzing_continue():
@@ -40,8 +38,8 @@ def main(system_prompt_template: str = SYSTEM_PROMPT_TEMPLATE,
                 print("See you next time!")
                 break
 
-            questions, answers = get_quiz(note_content, system_prompt)
-            score = give_quiz(note_name, questions, answers)
+            quiz = open_ai_service.generate_quiz(note, num_questions)
+            score = give_quiz(note, quiz)
             print(f"\n\tYou got {score}/{num_questions}!")
 
             if not should_quizzing_continue():

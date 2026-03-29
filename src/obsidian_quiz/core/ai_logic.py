@@ -1,8 +1,8 @@
 import os
 import atexit
 from openai import OpenAI
-from obsidian_quiz.utils.response_parser import (
-  split_into_questions_and_answers,
+from obsidian_quiz.utils.quiz_parser import (
+  split_questions_and_answers,
 )
 from dotenv import load_dotenv, find_dotenv
 
@@ -27,7 +27,7 @@ def generate_quiz_from_note(client: OpenAI, note_content: str,
 
 def get_quiz(note_content, system_prompt) -> tuple[list[str], list[str]]:
     quiz = generate_quiz_from_note(OpenAI_client, note_content, system_prompt)
-    questions, answers = split_into_questions_and_answers(quiz)
+    questions, answers = split_questions_and_answers(quiz)
     return questions, answers
 
 

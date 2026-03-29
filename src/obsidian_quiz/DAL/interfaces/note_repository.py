@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.obsidian_quiz.models.note import Note, NoteId
+from obsidian_quiz.models.note import Note, NoteId
 
 
 class NoteRepository(ABC):

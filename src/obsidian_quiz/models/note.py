@@ -9,7 +9,7 @@ class NoteId():
 # Used frozen because the Note object should be
 # re-created if the note itself is modified at all.
 @dataclass(frozen=True)
-class Note():
+class Note:
     id: NoteId
     name: str
     content: str
