@@ -9,13 +9,14 @@ from obsidian_quiz.config.prompts import SYSTEM_PROMPT_TEMPLATE
 
 class OpenAIService(LLMService):
 
-    def __init__(self):
+    def __init__(self, system_prompt_template=SYSTEM_PROMPT_TEMPLATE):
         load_dotenv(find_dotenv())
         self._client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self._system_prompt_template = system_prompt_template
 
     def generate_quiz(self, note: Note, num_questions: int) -> Quiz:
         try:
-            system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
+            system_prompt = self._system_prompt_template.format(
                 num_questions=num_questions
             )
             response = self._client.chat.completions.create(

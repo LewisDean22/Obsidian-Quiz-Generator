@@ -16,6 +16,9 @@ class NoteRepository(ABC):
         ...
 
     @abstractmethod
+    def get_name_to_id_map(self) -> dict[str, NoteId]: ...
+
+    @abstractmethod
     def get_by_id(self, note_id: NoteId) -> Note | None:
         """
         Returns the Note with the given ID, or None if no note exists

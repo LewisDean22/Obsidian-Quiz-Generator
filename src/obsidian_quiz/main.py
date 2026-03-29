@@ -9,26 +9,25 @@ Author: Lewis Dean
 License: MIT
 Version: 0.1.0
 """
-from obsidian_quiz.utils.markdown_file_finder import (
-    get_note_for_selected_mode,
-)
 from obsidian_quiz.CLI.user_input_handling import (
+    get_note_for_selected_mode,
     get_num_questions,
     give_quiz,
     should_quizzing_continue,
-    select_quiz_mode,
+    select_quiz_mode
 )
-from obsidian_quiz.DAL import OpenAIService
+from obsidian_quiz.DAL import OpenAIService, MdNoteRepository
 
 
 def main() -> None:
     open_ai_service = OpenAIService()
+    note_repo = MdNoteRepository()
     try:
         # end argument is to avoid automatic \n ending.
         print("Welcome! ", end="")
         while True:
             mode = select_quiz_mode()
-            note = get_note_for_selected_mode(mode)
+            note = get_note_for_selected_mode(mode, note_repo)
             print(f"You will be quizzed on {note.name}.")
             num_questions = get_num_questions()
 

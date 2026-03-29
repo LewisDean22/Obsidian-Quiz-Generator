@@ -1,9 +1,10 @@
 import sys
-from obsidian_quiz.utils.text_formatting import print_quiz_title
 import getpass
 from InquirerPy import inquirer
 from obsidian_quiz.models import Note, Quiz
 from obsidian_quiz.config.config_loader import MAX_QUESTIONS
+from obsidian_quiz.DAL import MdNoteRepository
+from obsidian_quiz.utils.exception_handling import assert_type
 
 
 def is_user_response_valid(user_response: str) -> bool:
@@ -20,6 +21,21 @@ def select_quiz_mode() -> str:
     return mode
 
 
+def get_note_for_selected_mode(mode: str, note_repo: MdNoteRepository) -> Note:
+    match mode:
+        case "Random note":
+            return note_repo.get_random()
+        case "Select a note":
+            note_to_id_map = note_repo.get_name_to_id_map()
+            chosen_note_id = inquirer.fuzzy(
+                message="Search for a Markdown note:",
+                choices=list(note_to_id_map.keys())
+            ).execute()
+            return note_repo.get_by_id(note_to_id_map[chosen_note_id])
+        case _:
+            raise ValueError("Invalid mode inputted")
+
+
 def get_num_questions() -> int:
     while True:
         user_input_str = input("How many questions would you like? ").strip()
@@ -32,6 +48,13 @@ def get_num_questions() -> int:
             continue
         break
     return num_questions
+
+
+def print_quiz_title(note_name: str) -> None:
+    assert_type(note_name, str, "Note name")
+    tabs = "\t" * 3
+    print("\n" + tabs + f"{note_name} Quiz!" + tabs)
+    print(tabs + "-" * (6 + len(note_name)) + tabs)
 
 
 def give_quiz(note: Note, quiz: Quiz) -> int:
