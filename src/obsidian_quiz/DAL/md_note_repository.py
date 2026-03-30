@@ -17,17 +17,17 @@ VAULT_DIRECTORY_PATH = pathlib.Path(
 class MdNoteRepository(NoteRepository):
     def __init__(
         self,
-        vault_filepath: str = VAULT_DIRECTORY_PATH,
+        vault_filepath: pathlib.Path = VAULT_DIRECTORY_PATH,
         min_lines: int = MINIMUM_LINE_COUNT
     ):
-        self.vault_filepath = vault_filepath
+        self._vault_filepath = vault_filepath
         self._min_lines = min_lines
         self._note_ids = self._load_note_ids()
         # eager loading ids and lazy loading content
 
     def _load_note_ids(self) -> set[NoteId]:
         note_ids = set()
-        for dirpath, _, filenames in os.walk(self.vault_filepath):
+        for dirpath, _, filenames in os.walk(self._vault_filepath):
             for filename in filenames:
                 full_path = os.path.join(dirpath, filename)
                 if self._is_valid_md_note(full_path):
