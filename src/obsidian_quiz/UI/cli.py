@@ -3,12 +3,11 @@ import getpass
 from InquirerPy import inquirer
 from obsidian_quiz.models import Note, Quiz
 from obsidian_quiz.config.config_loader import MAX_QUESTIONS
-from obsidian_quiz.DAL import MdNoteRepository
-from obsidian_quiz.utils.exception_handling import assert_type
+from obsidian_quiz.DAL.interfaces import NoteRepository, LLMService
 
 
-def is_user_response_valid(user_response: str) -> bool:
-    return user_response in ("y", "n")
+def is_response_valid(response: str) -> bool:
+    return response in ("y", "n")
 
 
 def select_quiz_mode() -> str:
@@ -21,14 +20,14 @@ def select_quiz_mode() -> str:
     return mode
 
 
-def get_note_for_selected_mode(mode: str, note_repo: MdNoteRepository) -> Note:
+def get_note_for_selected_mode(mode: str, note_repo: NoteRepository) -> Note:
     match mode:
         case "Random note":
             return note_repo.get_random()
         case "Select a note":
             note_to_id_map = note_repo.get_name_to_id_map()
             chosen_note_id = inquirer.fuzzy(
-                message="Search for a Markdown note:",
+                message="Search for a note:",
                 choices=list(note_to_id_map.keys())
             ).execute()
             return note_repo.get_by_id(note_to_id_map[chosen_note_id])
@@ -51,7 +50,6 @@ def get_num_questions() -> int:
 
 
 def print_quiz_title(note_name: str) -> None:
-    assert_type(note_name, str, "Note name")
     tabs = "\t" * 3
     print("\n" + tabs + f"{note_name} Quiz!" + tabs)
     print(tabs + "-" * (6 + len(note_name)) + tabs)
@@ -76,8 +74,8 @@ def give_quiz(note: Note, quiz: Quiz) -> int:
                 "\tDid you answer correctly? (y/n): "
             ).strip().lower()
 
-            if not is_user_response_valid(user_response):
-                print("\tPlease enter a valid reponse (y/n)")
+            if not is_response_valid(user_response):
+                print("\tPlease enter a valid response (y/n)")
                 continue
             score += user_response == "y"
             break
@@ -87,9 +85,35 @@ def give_quiz(note: Note, quiz: Quiz) -> int:
 
 def should_quizzing_continue() -> bool:
     while True:
-        should_continue = input("\nWould you like to keep quizzing (y/n)? ")
-        if not is_user_response_valid(should_continue):
-            print("Please enter a valid reponse (y/n): ")
-            continue
-        break
-    return True if should_continue == "y" else False
+        response = input("\nWould you like to keep quizzing (y/n)? ")
+        if is_response_valid(response):
+            return response == "y"
+        print("Please enter a valid response (y/n).")
+
+
+def run_quiz_cli(note_repo: NoteRepository, llm_service: LLMService) -> None:
+    try:
+        # end argument is to avoid automatic \n ending.
+        print("Welcome! ", end="")
+        while True:
+            mode = select_quiz_mode()
+            note = get_note_for_selected_mode(mode, note_repo)
+            print(f"You will be quizzed on {note.name}.")
+            num_questions = get_num_questions()
+
+            if num_questions == 0:
+                if should_quizzing_continue():
+                    continue
+                print("See you next time!")
+                break
+
+            quiz = llm_service.generate_quiz(note, num_questions)
+            score = give_quiz(note, quiz)
+            print(f"\n\tYou got {score}/{num_questions}!")
+
+            if not should_quizzing_continue():
+                print("See you next time!")
+                break
+
+    except KeyboardInterrupt:
+        print("\nQuiz interrupted. Goodbye!")

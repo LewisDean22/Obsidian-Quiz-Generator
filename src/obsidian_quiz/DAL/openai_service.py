@@ -32,11 +32,3 @@ class OpenAIService(LLMService):
             raise RuntimeError(f"Quiz generation failed: {e}") from e
         finally:
             self._client.close()
-
-
-# response = client.responses.create(
-#         model="gpt-4o-mini",
-#         input=f"{system_prompt}\n\n{note_content}",
-#         store=True
-#     )
-#     return response.output_text
