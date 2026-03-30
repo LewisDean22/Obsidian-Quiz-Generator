@@ -72,5 +72,10 @@ class MdNoteRepository(NoteRepository):
         return None
 
     def get_random(self) -> Note:
+        # Perhaps overkill as loading from an empty note repo should already
+        # raise an exception.
+        if not self._note_ids:
+            raise ValueError("Cannot get a random note from an empty "
+                             "repository")
         note_id = random.choice(list(self._note_ids))
         return self._create_note(note_id)
