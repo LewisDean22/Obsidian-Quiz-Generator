@@ -136,15 +136,14 @@ def run_quiz_cli(
             print(f"\n\tYou got {score}/{num_questions}!")
 
             if not use_cache:
-                if not use_cache:
-                    # Covers two cases:
-                    # 1. No cached quiz exists yet - creates new entry
-                    # 2. User chose to regenerate - overwrites existing entry
-                    quiz_repo.add_quiz_data_to_storage(
-                        note,
-                        quiz,
-                        score
-                    )
+                # Covers two cases:
+                # 1. No cached quiz exists yet - creates new entry
+                # 2. User chose to regenerate - overwrites existing entry
+                quiz_repo.add_quiz_data_to_storage(
+                    note,
+                    quiz,
+                    score
+                )
             else:
                 quiz_repo.update_quiz_data_in_storage(quiz_data, score)
 
