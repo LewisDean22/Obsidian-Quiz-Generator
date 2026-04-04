@@ -64,8 +64,8 @@ class JSONQuizRepository(QuizRepository):
     def add_quiz_data_to_storage(
         self,
         note: Note,
-        score: int,
-        quiz: Quiz
+        quiz: Quiz,
+        score: int
     ) -> None:
         data = self._load_json()
         note_slug = convert_to_slug(note.name)

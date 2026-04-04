@@ -1,7 +1,7 @@
 import sys
 import getpass
 from InquirerPy import inquirer
-from obsidian_quiz.models import Note, Quiz
+from obsidian_quiz.models import Note, Quiz, QuizData
 from obsidian_quiz.utils import create_quiz_object
 from obsidian_quiz.config.config_loader import MAX_QUESTIONS
 from obsidian_quiz.DAL.interfaces import (
@@ -86,6 +86,16 @@ def give_quiz(note: Note, quiz: Quiz) -> int:
     return score
 
 
+def print_quiz_stats(quiz_data: QuizData) -> None:
+    quiz_stats = quiz_data.stats
+    print(f"\tYou last completed this quiz on {quiz_stats.last_modified}.")
+    print(f"\tThe average score for this quiz is {quiz_stats.average:.2f}.")
+    num_previous_scores = len(quiz_stats.last_10_scores)
+    print(f"\tYour last {num_previous_scores} "
+          f"score{'s' if num_previous_scores > 1 else ''} "
+          f"are {quiz_stats.last_10_scores}.")
+
+
 def should_quizzing_continue() -> bool:
     response = get_valid_response("\nWould you like to keep quizzing (y/n)? ")
     return response == "y"
@@ -133,9 +143,12 @@ def run_quiz_cli(
                 )
 
             score = give_quiz(note, quiz)
-            print(f"\n\tYou got {score}/{num_questions}!")
+            print(f"\n\tYou got {score}/{num_questions}!\n")
 
-            if not use_cache:
+            if use_cache:
+                print_quiz_stats(quiz_data)
+                quiz_repo.update_quiz_data_in_storage(quiz_data, score)
+            else:
                 # Covers two cases:
                 # 1. No cached quiz exists yet - creates new entry
                 # 2. User chose to regenerate - overwrites existing entry
@@ -144,8 +157,6 @@ def run_quiz_cli(
                     quiz,
                     score
                 )
-            else:
-                quiz_repo.update_quiz_data_in_storage(quiz_data, score)
 
             if not should_quizzing_continue():
                 print("See you next time!")

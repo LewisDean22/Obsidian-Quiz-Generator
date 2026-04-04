@@ -7,4 +7,4 @@ lewis_vault
 **/__pycache__/
 .mypy_cache/
 .venv/
-src/obsidian_quiz/storage
+src/obsidian_quiz/storage/*
