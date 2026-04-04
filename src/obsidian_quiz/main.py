@@ -9,14 +9,19 @@ Author: Lewis Dean
 License: MIT
 Version: 0.1.0
 """
-from obsidian_quiz.DAL import OpenAIService, MdNoteRepository
+from obsidian_quiz.DAL import (
+    OpenAIService,
+    MdNoteRepository,
+    JSONQuizRepository
+)
 from obsidian_quiz.UI.cli import run_quiz_cli
 
 
 def main() -> None:
     open_ai_service = OpenAIService()
     note_repo = MdNoteRepository()
-    run_quiz_cli(note_repo, open_ai_service)
+    quiz_repo = JSONQuizRepository()
+    run_quiz_cli(note_repo, open_ai_service, quiz_repo)
 
 
 if __name__ == "__main__":

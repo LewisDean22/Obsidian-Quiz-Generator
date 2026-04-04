@@ -39,4 +39,4 @@ def create_quiz_object(
         Question(text, answer) for text, answer
         in zip(questions_list, answers_list)
     )
-    return Quiz(note_name, questions)
+    return Quiz(note_name, questions, quiz_content)

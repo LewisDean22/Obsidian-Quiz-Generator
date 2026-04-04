@@ -2,12 +2,21 @@ import sys
 import getpass
 from InquirerPy import inquirer
 from obsidian_quiz.models import Note, Quiz
+from obsidian_quiz.utils import create_quiz_object
 from obsidian_quiz.config.config_loader import MAX_QUESTIONS
-from obsidian_quiz.DAL.interfaces import NoteRepository, LLMService
+from obsidian_quiz.DAL.interfaces import (
+    NoteRepository,
+    LLMService,
+    QuizRepository
+)
 
 
-def is_response_valid(response: str) -> bool:
-    return response in ("y", "n")
+def get_valid_response(question: str) -> bool:
+    while True:
+        response = input(question).strip().lower()
+        if response in ("y", "n"):
+            return response
+        print("Please enter a valid response (y/n).")
 
 
 def select_quiz_mode() -> str:
@@ -69,29 +78,24 @@ def give_quiz(note: Note, quiz: Quiz) -> int:
         sys.stdout.write("\033[K")  # Erases line
 
         print(f"\tA{count}: {question.answer}\t")
-        while True:
-            user_response = input(
-                "\tDid you answer correctly? (y/n): "
-            ).strip().lower()
-
-            if not is_response_valid(user_response):
-                print("\tPlease enter a valid response (y/n)")
-                continue
-            score += user_response == "y"
-            break
+        response = get_valid_response(
+            "\tDid you answer correctly? (y/n): "
+        )
+        score += response == "y"
 
     return score
 
 
 def should_quizzing_continue() -> bool:
-    while True:
-        response = input("\nWould you like to keep quizzing (y/n)? ")
-        if is_response_valid(response):
-            return response == "y"
-        print("Please enter a valid response (y/n).")
+    response = get_valid_response("\nWould you like to keep quizzing (y/n)? ")
+    return response == "y"
 
 
-def run_quiz_cli(note_repo: NoteRepository, llm_service: LLMService) -> None:
+def run_quiz_cli(
+    note_repo: NoteRepository,
+    llm_service: LLMService,
+    quiz_repo: QuizRepository
+) -> None:
     try:
         # end argument is to avoid automatic \n ending.
         print("Welcome! ", end="")
@@ -99,17 +103,50 @@ def run_quiz_cli(note_repo: NoteRepository, llm_service: LLMService) -> None:
             mode = select_quiz_mode()
             note = get_note_for_selected_mode(mode, note_repo)
             print(f"You will be quizzed on {note.name}.")
-            num_questions = get_num_questions()
 
-            if num_questions == 0:
-                if should_quizzing_continue():
-                    continue
-                print("See you next time!")
-                break
+            quiz_data = quiz_repo.get_quiz_data(note)
+            cached_quiz = quiz_data.cached_quiz
 
-            quiz = llm_service.generate_quiz(note, num_questions)
+            use_cache = False
+            if cached_quiz is not None:
+                # Checks to see if cached quiz should be used instead
+                # of generating one with a LLM.
+                response = get_valid_response(
+                    "\nWould you like to use the cached quiz (y/n)? "
+                    )
+                use_cache = response == "y"
+            if use_cache:
+                quiz_string = cached_quiz.quiz_string
+                quiz = create_quiz_object(note.name, quiz_string)
+                num_questions = len(quiz.questions)
+            else:
+                num_questions = get_num_questions()
+                if num_questions == 0:
+                    if should_quizzing_continue():
+                        continue
+                    print("See you next time!")
+                    break
+
+                quiz = llm_service.generate_quiz(
+                    note,
+                    num_questions
+                )
+
             score = give_quiz(note, quiz)
             print(f"\n\tYou got {score}/{num_questions}!")
+
+            if not use_cache:
+                if not use_cache:
+                    # Covers two cases:
+                    # 1. No cached quiz exists yet - creates new entry
+                    # 2. User chose to regenerate - overwrites existing entry
+                    quiz_repo.add_quiz_data_to_storage(
+                        note,
+                        quiz,
+                        score
+                    )
+            else:
+                quiz_repo.update_quiz_data_in_storage(quiz_data, score)
 
             if not should_quizzing_continue():
                 print("See you next time!")

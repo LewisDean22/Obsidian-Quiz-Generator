@@ -30,5 +30,3 @@ class OpenAIService(LLMService):
             return create_quiz_object(note.name, quiz_content)
         except OpenAIError as e:
             raise RuntimeError(f"Quiz generation failed: {e}") from e
-        finally:
-            self._client.close()
