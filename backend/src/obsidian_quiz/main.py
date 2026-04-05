@@ -14,7 +14,7 @@ from obsidian_quiz.DAL import (
     MdNoteRepository,
     JSONQuizRepository
 )
-from obsidian_quiz.UI.cli import run_quiz_cli
+from obsidian_quiz.CLI.cli import run_quiz_cli
 
 
 def main() -> None:

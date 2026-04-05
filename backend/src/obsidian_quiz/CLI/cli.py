@@ -91,9 +91,9 @@ def print_quiz_stats(quiz_data: QuizData) -> None:
     print(f"\tYou last completed this quiz on {quiz_stats.last_modified}.")
     print(f"\tThe average score for this quiz is {quiz_stats.average:.2f}.")
     num_previous_scores = len(quiz_stats.last_10_scores)
-    print(f"\tYour last {num_previous_scores} "
-          f"score{'s' if num_previous_scores > 1 else ''} "
-          f"are {quiz_stats.last_10_scores}.")
+    print(f"\tYour last "
+          f"{'scores are' if num_previous_scores > 1 else 'score is'} "
+          f"{quiz_stats.last_10_scores}.")
 
 
 def should_quizzing_continue() -> bool:

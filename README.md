@@ -49,10 +49,7 @@ poetry run obsidian_quiz
 
 ### Roadmap
 
-1. Quiz Statistics:
-    - Use a JSON to store last-k quiz scores for each note, along with each note's average quiz score and the overall average across all Obsidian quizzes taken.
-    - Display these statistics at the end of each quiz.
-2. Additional Quiz Modes:
+- Additional Quiz Modes:
     - Spaced Repetition Mode (for more effective learning).
     - RAG-sourced Quizzes - store the Obsidian vault in a vector database and generate quizzes on an arbitrary topic according to the user's query.
 

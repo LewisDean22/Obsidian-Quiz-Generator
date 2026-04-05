@@ -43,7 +43,6 @@ class JSONQuizRepository(QuizRepository):
         if quiz_cache is None:
             return None
         note_hash = hash_content(note.content)
-        print(note_hash)
         if note_hash != quiz_cache["note_hash"]:
             return None  # note changed so quiz is stale
         return CachedQuiz(**quiz_cache)
